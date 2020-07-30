@@ -1,5 +1,5 @@
 # 前言
-本文为原创作品，版权属于：[大卫科技 Blog][1]（未经授权禁止转载）！
+本文为原创作品，版权属于：[大卫科技 Blog][1]（转载请保留原出处）！
 本文链接https://www.iyuu.cn/archives/88/
 
 ## 一、功能介绍
@@ -108,7 +108,6 @@ MSN | msn | msn:APP_KEY,APP_SECRET,MSN | https://127.0.0.1/oauth_callback?type=m
 总结
 第三方账号虽然是一个小功能，但是在设计过程中，我们要结合自身产品的特点来确定产品方案和产品流程。授权之后，是直接登录成功，还是绑定自己平台的账号，这是由自己产品特点决定。同时，对新增账号来说，如何设计用户账号的安全，也需要根据产品特点和安全策略来设计适合的产品流程。
 
-
 ----------
 
 ## 六、数据表结构（不开发，可以不看）
@@ -157,14 +156,14 @@ CREATE TABLE IF NOT EXISTS `typecho_oauth_user` (
 码云：https://gitee.com/ledc/TeConnect
 
 
-  [1]: https://www.iyuu.cn
-  [2]: https://github.com/jiangmuzi/TeConnect
-  [3]: https://www.iyuu.cn/usr/uploads/2019/08/379738753.png
-  [4]: https://www.iyuu.cn/usr/uploads/2019/08/1686542734.png
-  [5]: https://www.iyuu.cn/usr/uploads/2019/08/2003267968.png
-  [6]: https://www.iyuu.cn/usr/uploads/2019/08/2078951516.png
-  [7]: https://www.iyuu.cn/usr/uploads/2019/08/1192845902.png
-  [8]: https://www.iyuu.cn/usr/uploads/2019/08/1331919342.png
-  [9]: https://www.iyuu.cn/usr/uploads/2019/08/3278948233.jpg
-  [10]: https://www.iyuu.cn/usr/uploads/2019/08/2385470498.png
-  [11]: https://www.iyuu.cn/usr/uploads/2019/08/3510776867.png
+[1]: https://www.iyuu.cn
+[2]: https://github.com/jiangmuzi/TeConnect
+[3]: https://www.iyuu.cn/usr/uploads/2019/08/379738753.png
+[4]: https://www.iyuu.cn/usr/uploads/2019/08/1686542734.png
+[5]: https://www.iyuu.cn/usr/uploads/2019/08/2003267968.png
+[6]: https://www.iyuu.cn/usr/uploads/2019/08/2078951516.png
+[7]: https://www.iyuu.cn/usr/uploads/2019/08/1192845902.png
+[8]: https://www.iyuu.cn/usr/uploads/2019/08/1331919342.png
+[9]: https://www.iyuu.cn/usr/uploads/2019/08/3278948233.jpg
+[10]: https://www.iyuu.cn/usr/uploads/2019/08/2385470498.png
+[11]: https://www.iyuu.cn/usr/uploads/2019/08/3510776867.png
