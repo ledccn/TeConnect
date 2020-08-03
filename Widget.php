@@ -3,6 +3,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
 {
     private $auth;
     private $oauth_user;
+    private $referer = ''; // 来源页面
     /**
      * 风格目录
      *
@@ -48,6 +49,22 @@ class TeConnect_Widget extends Widget_Abstract_Users
             //加载ThinkOauth类并实例化一个对象
             require_once 'ThinkOauth.php';
             $sdk = ThinkOauth::getInstance($type);
+            /**
+             * 来源页面放入session
+             */
+            //开户session
+            if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()]) {
+                session_id($_COOKIE[session_name()]);
+            }
+            if (session_status() != PHP_SESSION_ACTIVE) {
+                session_set_cookie_params(3600);
+                session_start();
+            }
+            $this->referer = $this->request->getReferer();  // 登录前页面
+            if (strpos($this->referer, $this->options->index) === 0) {
+                // 站内来源页放入session
+                $_SESSION['Referer'] = $this->referer;
+            }
             //302重定向
             $this->response->redirect($sdk->getRequestCodeURL());
         }
@@ -65,6 +82,9 @@ class TeConnect_Widget extends Widget_Abstract_Users
             session_start();
             $this->auth = isset($_SESSION['__typecho_auth']) ? $_SESSION['__typecho_auth']  : array();
             $this->oauth_user = isset($_SESSION['__typecho_oauth_user']) ? $_SESSION['__typecho_oauth_user']  : array();
+            // session内取出来源页
+            $this->referer = isset($_SESSION['Referer']) ? $_SESSION['Referer'] : '';
+            unset($_SESSION['Referer']);
         }
         //仅处理来自绑定界面POST提交的数据，第三方回调会跳过
         if ($this->request->isPost()) {
@@ -74,13 +94,13 @@ class TeConnect_Widget extends Widget_Abstract_Users
             }
 
             if (!isset($this->auth['openid']) || !isset($this->auth['type'])) {
-                $this->response->redirect($this->options->index);
+                $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
             }
             $func = 'doCallback'.ucfirst($do);
             $this->$func();
             unset($_SESSION['__typecho_auth']);
             unset($_SESSION['__typecho_oauth_user']);
-            $this->response->redirect($this->options->index);
+            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         }
 
         //第三方登录回调处理
@@ -130,7 +150,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
             $this->bindUser($this->user->uid, $oauth_user, $this->auth['type']);
             //提示，并跳转
             $this->widget('Widget_Notice')->set(array('成功绑定账号!'));
-            $this->response->redirect($this->options->index);
+            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         }
 
         //未登录状态，查询第三方账号的绑定关系
@@ -140,7 +160,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
             $this->useUidLogin($isConnect['uid']);
             //提示，并跳转
             $this->widget('Widget_Notice')->set(array('已成功登陆!'));
-            $this->response->redirect($this->options->index);
+            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         }
 
         //未登录状态且未绑定，控制显示绑定界面
@@ -158,7 +178,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
             } else {
                 $this->widget('Widget_Notice')->set(array('注册用户失败!'), 'error');
             }
-            $this->response->redirect($this->options->index);
+            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         } else {
             //用户绑定界面
             if (!isset($_SESSION['__typecho_auth'])) {
