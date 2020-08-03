@@ -60,10 +60,12 @@ class TeConnect_Widget extends Widget_Abstract_Users
                 session_set_cookie_params(3600);
                 session_start();
             }
-            $this->referer = $this->request->getReferer();  // 登录前页面
+            // 登录前页面
+            $this->referer = isset($_COOKIE['TeConnect_Referer']) ? urldecode($_COOKIE['TeConnect_Referer']) : $this->request->getReferer();
+            setcookie("TeConnect_Referer", "", time() - 3600);
             if (strpos($this->referer, $this->options->index) === 0) {
                 // 站内来源页放入session
-                $_SESSION['Referer'] = $this->referer;
+                $_SESSION['TeConnect_Referer'] = $this->referer;
             }
             //302重定向
             $this->response->redirect($sdk->getRequestCodeURL());
@@ -78,14 +80,20 @@ class TeConnect_Widget extends Widget_Abstract_Users
      */
     public function callback()
     {
-        if (!isset($_SESSION)) {
-            session_start();
-            $this->auth = isset($_SESSION['__typecho_auth']) ? $_SESSION['__typecho_auth']  : array();
-            $this->oauth_user = isset($_SESSION['__typecho_oauth_user']) ? $_SESSION['__typecho_oauth_user']  : array();
-            // session内取出来源页
-            $this->referer = isset($_SESSION['Referer']) ? $_SESSION['Referer'] : '';
-            unset($_SESSION['Referer']);
+        //开户session
+        if (isset($_COOKIE[session_name()]) && $_COOKIE[session_name()]) {
+            session_id($_COOKIE[session_name()]);
         }
+        if (session_status() != PHP_SESSION_ACTIVE) {
+            session_set_cookie_params(3600);
+            session_start();
+        }
+        $this->auth = isset($_SESSION['__typecho_auth']) ? $_SESSION['__typecho_auth']  : array();
+        $this->oauth_user = isset($_SESSION['__typecho_oauth_user']) ? $_SESSION['__typecho_oauth_user']  : array();
+        // session内取出来源页
+        $this->referer = isset($_SESSION['TeConnect_Referer']) ? $_SESSION['TeConnect_Referer'] : '';
+        unset($_SESSION['TeConnect_Referer']);
+
         //仅处理来自绑定界面POST提交的数据，第三方回调会跳过
         if ($this->request->isPost()) {
             $do = $this->request->get('do');

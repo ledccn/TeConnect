@@ -30,6 +30,14 @@
 <?php TeConnect_Plugin::show(); ?>
    ```
  4. 在第三方平台设置网站回调域，注意区分http、https（方法见：参数配置 - 配置示例）。
+  5. 如果您的主题开启了全站PJAX，需要把以下代码放入PJAX回调函数内：
+
+```
+/*PJAX时：来源页写入cookie*/
+var exdate = new Date();
+exdate.setDate(exdate.getDate() + 1);
+document.cookie = "TeConnect_Referer=" + encodeURI(window.location.href) + "; expires=" + exdate.toGMTString() + "; path=/";
+```
 
 ----------
 
