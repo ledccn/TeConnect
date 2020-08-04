@@ -111,7 +111,7 @@ class TeConnect_Plugin implements Typecho_Plugin_Interface
         $db = Typecho_Db::get();
         $prefix = $db->getPrefix();
         if ("Pdo_Mysql" === $db->getAdapterName() || "Mysql" === $db->getAdapterName()) {
-            $sql = "CREATE TABLE IF NOT EXISTS `{$prefix}_oauth_user` (
+            $sql = "CREATE TABLE IF NOT EXISTS `{$prefix}oauth_user` (
                     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
                     `uid` int(10) unsigned NOT NULL COMMENT '用户ID',
                     `access_token` varchar(255) NOT NULL COMMENT '用户对应access_token',
