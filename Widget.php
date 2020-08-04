@@ -113,6 +113,7 @@ class TeConnect_Widget extends Widget_Abstract_Users
 
         //第三方登录回调处理
         $options = TeConnect_Plugin::options();
+        $oauth_user = array();
         if (empty($this->auth)) {
             $code = $this->request->get('code', '');
             $this->auth['type'] = $this->request->get('type', '');
@@ -132,16 +133,16 @@ class TeConnect_Widget extends Widget_Abstract_Users
                 //获取第三方账号数据
                 $user_info = $this->$type($token);
                 $oauth_user = array(
-                    'uid'=>0,
-                    'access_token'=>$token['access_token'],
-                    'expires_in'=>isset($token['expires_in']) ? $this->options->gmtTime+$token['expires_in']: 0,
-                    'gender'=>isset($user_info['gender']) ? $user_info['gender'] : 0,
-                    'head_img'=>$user_info['head_img'],
-                    'name'=>$user_info['name'],
-                    'nickname'=>$user_info['nickname'],
-                    'openid'=>$token['openid'],
-                    'type'=>$type,
-                    );
+                    'uid'           =>  0,
+                    'openid'        =>  $token['openid'],
+                    'access_token'  =>  $token['access_token'],
+                    'expires_in'    =>  isset($token['expires_in']) ? $this->options->gmtTime+$token['expires_in']: 0,
+                    'gender'        =>  isset($user_info['gender']) ? $user_info['gender'] : 0,
+                    'head_img'      =>  $user_info['head_img'],
+                    'name'          =>  $user_info['name'],
+                    'nickname'      =>  $user_info['nickname'],
+                    'type'          =>  $type,
+                );
                 //获取openid
                 $this->auth['openid'] = $token['openid'];
                 $this->auth['nickname'] = $user_info['nickname'];
@@ -159,42 +160,42 @@ class TeConnect_Widget extends Widget_Abstract_Users
             //提示，并跳转
             $this->widget('Widget_Notice')->set(array('成功绑定账号!'));
             $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
-        }
-
-        //未登录状态，查询第三方账号的绑定关系
-        $isConnect = $this->findConnectUser($oauth_user, $this->auth['type']);
-        if ($isConnect) {
-            //已经绑定，直接登录
-            $this->useUidLogin($isConnect['uid']);
-            //提示，并跳转
-            $this->widget('Widget_Notice')->set(array('已成功登陆!'));
-            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
-        }
-
-        //未登录状态且未绑定，控制显示绑定界面
-        $custom = $this->options->plugin('TeConnect')->custom;
-        if (!$custom && !empty($this->auth['nickname'])) {
-            $dataStruct = array(
-                'screenName'=>  $this->auth['nickname'],
-                'created'   =>  $this->options->gmtTime,
-                'group'     =>  'subscriber'
-            );
-            //新注册账号
-            $uid = $this->regConnectUser($dataStruct, $oauth_user);
-            if ($uid) {
-                $this->widget('Widget_Notice')->set(array('已成功注册并登陆!'));
-            } else {
-                $this->widget('Widget_Notice')->set(array('注册用户失败!'), 'error');
-            }
-            $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
         } else {
-            //用户绑定界面
-            if (!isset($_SESSION['__typecho_auth'])) {
-                $_SESSION['__typecho_auth'] = $this->auth;
-                $_SESSION['__typecho_oauth_user'] = $oauth_user;
+            //未登录状态，查询第三方账号的绑定关系
+            $isConnect = $this->findConnectUser($oauth_user, $this->auth['type']);
+            if ($isConnect) {
+                //已经绑定，直接登录
+                $this->useUidLogin($isConnect['uid']);
+                //提示，并跳转
+                $this->widget('Widget_Notice')->set(array('已成功登陆!'));
+                $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
             }
-            //未绑定，引导用户到绑定界面
-            $this->render('callback.php');
+
+            //未登录状态且未绑定，控制显示绑定界面
+            $custom = $this->options->plugin('TeConnect')->custom;
+            if (!$custom && !empty($this->auth['nickname'])) {
+                $dataStruct = array(
+                    'screenName'=>  $this->auth['nickname'],
+                    'created'   =>  $this->options->gmtTime,
+                    'group'     =>  'subscriber'
+                );
+                //新注册账号
+                $uid = $this->regConnectUser($dataStruct, $oauth_user);
+                if ($uid) {
+                    $this->widget('Widget_Notice')->set(array('已成功注册并登陆!'));
+                } else {
+                    $this->widget('Widget_Notice')->set(array('注册用户失败!'), 'error');
+                }
+                $this->response->redirect(empty($this->referer) ? $this->options->index : $this->referer);
+            } else {
+                //用户绑定界面
+                if (!isset($_SESSION['__typecho_auth'])) {
+                    $_SESSION['__typecho_auth'] = $this->auth;
+                    $_SESSION['__typecho_oauth_user'] = $oauth_user;
+                }
+                //未绑定，引导用户到绑定界面
+                $this->render('callback.php');
+            }
         }
     }
     //绑定已有用户
@@ -344,11 +345,11 @@ class TeConnect_Widget extends Widget_Abstract_Users
     public function render($themeFile)
     {
         /** 文件不存在 */
-        if (!file_exists($this->_themeDir . $themeFile)) {
+        if (!is_file(__DIR__ . '/' . $themeFile)) {
             Typecho_Common::error(500);
         }
         /** 输出模板 */
-        require_once $this->_themeDir . $themeFile;
+        require_once (__DIR__ . '/' . $themeFile);
     }
     /**
      * 获取主题文件

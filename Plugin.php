@@ -112,25 +112,25 @@ class TeConnect_Plugin implements Typecho_Plugin_Interface
         $prefix = $db->getPrefix();
         if ("Pdo_Mysql" === $db->getAdapterName() || "Mysql" === $db->getAdapterName()) {
             $sql = "CREATE TABLE IF NOT EXISTS `{$prefix}oauth_user` (
-                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                    `uid` int(10) unsigned NOT NULL COMMENT '用户ID',
-                    `access_token` varchar(255) NOT NULL COMMENT '用户对应access_token',
-                    `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后登录',
-                    `expires_in` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'access_token过期时间戳',
-                    `gender` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别0未知,1男,2女',
-                    `head_img` varchar(255) NOT NULL COMMENT '头像',
-                    `name` varchar(38) NOT NULL COMMENT '名字',
-                    `nickname` varchar(38) NOT NULL COMMENT '第三方昵称',
-                    `openid` char(50) NOT NULL COMMENT '第三方平台的用户唯一标识',
-                    `refresh_token` varchar(255) NOT NULL COMMENT '刷新有效期token',
-                    `type` char(32) NOT NULL COMMENT '第三方平台的类型',
-                    `uuid` int(10) unsigned NOT NULL COMMENT '对应users表uid',
-                    PRIMARY KEY (`id`),
-                    KEY `uuid` (`uuid`),
-                    KEY `uid` (`uid`),
-                    KEY `type` (`type`),
-                    KEY `openid` (`openid`)
-                  ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
+                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `uid` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '用户ID',
+                  `uuid` int(10) unsigned NOT NULL DEFAULT '0',
+                  `type` char(32) NOT NULL,
+                  `openid` char(50) NOT NULL,
+                  `access_token` varchar(255) NOT NULL DEFAULT '0' COMMENT '用户对应access_token',
+                  `expires_in` int(10) unsigned NOT NULL DEFAULT '0',
+                  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后登录',
+                  `name` varchar(38) NOT NULL DEFAULT '0',
+                  `nickname` varchar(38) NOT NULL DEFAULT '0',
+                  `gender` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别0未知,1男,2女',
+                  `head_img` varchar(255) NOT NULL DEFAULT '0' COMMENT '头像',
+                  `refresh_token` varchar(255) NOT NULL DEFAULT '0' COMMENT '刷新有效期token',
+                  PRIMARY KEY (`id`),
+                  KEY `uuid` (`uuid`),
+                  KEY `uid` (`uid`),
+                  KEY `type` (`type`),
+                  KEY `openid` (`openid`)
+                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1";
             $db->query($sql);
         } else {
             throw new Typecho_Plugin_Exception(_t('对不起, 本插件仅支持MySQL数据库。'));

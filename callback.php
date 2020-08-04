@@ -69,10 +69,6 @@
 				<label for="mail" class="required">邮箱</label>
 				<input type="text" name="mail"  />
 				</p>
-				<p>
-				<label for="mail" class="required">网站</label>
-				<input type="text" name="url" />
-				</p>
 				<p><button name="do" value="reg">确定</button></p>
 			</div>
 			<div class="tabs-panel" id="tab2">
