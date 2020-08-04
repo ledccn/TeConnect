@@ -6,11 +6,12 @@
 **Typecho互联登录插件，目前已支持15种第三方登录：QQ/腾讯微博/新浪微博/网易微博/人人网/360/豆瓣/Github/Google/Msn/点点/淘宝网/百度/开心网/搜狐。**
 
 在原项目[TeConnect][2]的基础上，进行完全的二次开发、优化及修复。重点有：
- 1. 重新设计数据表结构，删除原connect表，后续具有完美的扩展性及兼容性；
- 2. 已开发支持15种第三方登录，后续可以支持更多……；
- 3. 优化会员绑定逻辑，修复原项目登录状态下绑定错乱、重复绑定等Bug；
- 4. 增加会员uuid机制，自动关联users数据表的uid字段，支持更多功能开发的可能；
- 5. 优化解绑逻辑，和第三方资料更新逻辑等。
+  1. 登录成功后跳转登录前页面，增强体验；
+  2. 重新设计数据表结构，删除原connect表，后续具有完美的扩展性及兼容性；
+  3. 已开发支持15种第三方登录，后续可以支持更多……；
+  4. 优化会员绑定逻辑，修复原项目登录状态下绑定错乱、重复绑定等Bug；
+  5. 增加会员uuid机制，自动关联users数据表的uid字段，支持更多功能开发的可能；
+  6. 优化解绑逻辑，和第三方资料更新逻辑等。
 
 ----------
 
@@ -116,48 +117,7 @@ MSN | msn | msn:APP_KEY,APP_SECRET,MSN | https://127.0.0.1/oauth_callback?type=m
 总结
 第三方账号虽然是一个小功能，但是在设计过程中，我们要结合自身产品的特点来确定产品方案和产品流程。授权之后，是直接登录成功，还是绑定自己平台的账号，这是由自己产品特点决定。同时，对新增账号来说，如何设计用户账号的安全，也需要根据产品特点和安全策略来设计适合的产品流程。
 
-----------
 
-## 六、数据表结构（不开发，可以不看）
-### typecho_oauth_user数据库表结构：
-
-字段 | 类型 | 注释  
--|-|-
-uid | int(10) unsigned NOT NULL COMMENT | 用户ID
-access_token | varchar(255) NOT NULL COMMENT | 用户对应access_token
-datetime | timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT | 最后登录
-expires_in | int(10) unsigned NOT NULL DEFAULT '0' COMMENT | access_token过期时间戳
-gender | tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT | 性别0未知,1男,2女
-head_img | varchar(255) NOT NULL COMMENT | 头像
-name | varchar(38) NOT NULL COMMENT | 名字
-nickname | varchar(38) NOT NULL COMMENT | 第三方昵称
-openid | char(50) NOT NULL COMMENT | 第三方平台的用户唯一标识
-refresh_token | varchar(255) NOT NULL COMMENT | 刷新有效期token
-type | char(32) NOT NULL COMMENT | 第三方平台的类型
-uuid | int(10) unsigned NOT NULL COMMENT | 对应users表uid
-
-![typecho_oauth_user表结构.png][11]
-
-### 创建数据表SQL语句
-```mysql
-CREATE TABLE IF NOT EXISTS `typecho_oauth_user` (
-  `uid` int(10) unsigned NOT NULL COMMENT '用户ID',
-  `access_token` varchar(255) NOT NULL COMMENT '用户对应access_token',
-  `datetime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '最后登录',
-  `expires_in` int(10) unsigned NOT NULL DEFAULT '0' COMMENT 'access_token过期时间戳',
-  `gender` tinyint(1) unsigned NOT NULL DEFAULT '0' COMMENT '性别0未知,1男,2女',
-  `head_img` varchar(255) NOT NULL COMMENT '头像',
-  `name` varchar(38) NOT NULL COMMENT '名字',
-  `nickname` varchar(38) NOT NULL COMMENT '第三方昵称',
-  `openid` char(50) NOT NULL COMMENT '第三方平台的用户唯一标识',
-  `refresh_token` varchar(255) NOT NULL COMMENT '刷新有效期token',
-  `type` char(32) NOT NULL COMMENT '第三方平台的类型',
-  `uuid` int(10) unsigned NOT NULL COMMENT '对应users表uid',
-  UNIQUE KEY `openid` (`openid`),
-  KEY `uuid` (`uuid`),
-  KEY `uid` (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-```
 
 ----------
 ## 项目仓库
